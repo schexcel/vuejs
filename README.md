@@ -113,4 +113,72 @@
     })
     export {http}
 ```
-30.
+# 5- backend install
+30. ``` start menü + xampp contorlpanel ``` indítsd el az APACHE + MySQL
+31. ```c:\vue-gyak\drinks_backend\``` - másold fel a backend mappa tartalmát
+32. ```composer install``` - nyiss egy cli-t admin módban, és add ki a parancsot, hogy a függőségek települjenek!
+33. ```php artisan migrate``` - készüljön el az adatbázis!
+34. ```php artisan db:seed``` - Töltődjenek fel a táblák adattal!!!!
+35. ```php artisan serve ``` - indítsd el a szervert!
+36. ```http://127.0.0.1:8000/api/drinks``` - Ezen a címen egy böngészőből elérhető a backend (elvileg)
+37. Ne zárd be a CLI-t!
+
+# 6- Frontend megírása - kezdjük a HomeView.vue-val!
+
+38. Írjuk meg a ```HomeView.vue```-fájlt!
+```
+<script setup>
+import {http} from '@/utils/http';
+import {reactive, onMounted, ref} from 'vue';
+import {RouterLink} from 'vue-router';
+
+const drinks = reactive([]);
+async function getData(){
+  const response = await http.get('drinks')
+  for (const item of response.data.data){
+    const obj = {
+      'id' :item.id,
+      'name' : item.name,
+      'price' : item.price,
+      'discounted' : discount(item.discounted)
+    }
+    drinks.push(obj)
+  }
+}
+
+function discount(data){
+  if (data === true){
+    return "Akciós"
+  }
+  else {
+    return "Nem akciós"
+  }
+}
+onMounted(getData)
+</script>
+
+<template>
+<main>
+  <h1>Italok</h1>
+  <hr>
+  <table class="table table-responsive">
+    <thead>
+      <tr>
+        <th>Név</th>
+        <th>Ár</th>
+        <th>Akciós</th>
+        <th>Művelet</th>
+      </tr>
+    </thead>
+    <tbody>
+    <tr v-for="drink in drinks" :key="drink.id">
+      <td>{{drink.name}}</td>
+      <td>{{drink.price}}</td>
+      <td>{{drink.discounted}}</td>
+      <td><router-link class="btn btn-primary" :to="`/drinks/${drink.id}`">Megjelenítés</router-link></td>
+    </tr>
+    </tbody>
+  </table>
+</main>
+</template>
+```
