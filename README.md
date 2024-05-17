@@ -560,7 +560,7 @@ import { RouterLink } from 'vue-router'
     <style scoped>
     </style>
 ```
-#10 - 7. feladat validálás!!!
+# 10 - 7. feladat validálás!!!
 60. Választani kell, hogy ```YUP``` vagy ```VEE-VALIDATE``` először a YUP-al készítem el. Mindezt a ```CreateNewDrinkFormView.vue```-fájlban!
 61. A ```CreateNewDrinkFormView.vue``` fájlba az alábbi részeket kell betenni:
 ```
