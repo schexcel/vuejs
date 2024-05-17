@@ -339,6 +339,7 @@ import { RouterLink } from 'vue-router'
     </main>
     </template>
 ```
+# 9-  6-feladat ```CreateNewDrinkFormView.vue``` - fájl elkészítése
 56.  6-feladat ```CreateNewDrinkFormView.vue``` - fájl ```<template>```` ```</template>``` megírása! ```<main,div row, div col> létrehozása, Form beillesztése!
 ```
     <template>
@@ -559,4 +560,30 @@ import { RouterLink } from 'vue-router'
     <style scoped>
     </style>
 ```
-60. 
+#10 - 7. feladat validálás!!!
+60. Választani kell, hogy ```YUP``` vagy ```VEE-VALIDATE``` először a YUP-al készítem el. Mindezt a ```CreateNewDrinkFormView.vue```-fájlban!
+61. A ```CreateNewDrinkFormView.vue``` fájlba az alábbi részeket kell betenni:
+```
+<script setup>
+//elejére:
+import * as yup from 'yup'
+
+//végére az on mounted elé kell egy object séma!!!:
+
+const schema = yup.object({
+  name: yup.string().max(50, 'kötelező, szöveg, maximum 50 karakter').required("kötelező, szöveg, maximum 50 karakter"),
+  description: yup.string().max(255, 'maximum 255 karakter').required("kötetelező, szöveg, maximum 255 karakter"),
+  quantity: yup.number().min(1).max(100, 'maximum 255 karakter').required("kötetelező, minimum 1, maximum 100"),
+  price: yup.number().min(1).max(5000, 'maximum 255 karakter').required("kötelező, egész szám, minimum 1, maximum 5000"),
+  discounted_price: yup.number().min(1).max(5000, 'maximum 255 karakter').required("egész szám, minimum 1, maximum 5000, kisebb mint a \"price\""),
+  flavor_id: yup.number().required("kötelető, létező"),
+  ingredients: yup.string().required("Kötelező")
+})
+</script>
+
+<template>
+<!--  össze kell kötni a form-al így---    :validation-schema="schema" - val kell kiegészíteni a VFORM @submitot!!! -->
+<VForm  @submit="submitForm" :validation-schema="schema">
+<template>
+
+```
