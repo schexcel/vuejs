@@ -1,4 +1,4 @@
-# 1- vuejs projekt létrehozása CMD-adminisztrátorként
+# 1- 1 feladat-vuejs projekt létrehozása CMD-adminisztrátorként
 1. mappa létrehozása, pl.: ```c:\vue-gyak```
 2. belépés a mappába ```cd c:\vue-gyak```
 3. parancssor indítása a mappában (adminként)
@@ -25,8 +25,8 @@
 19. Megnyitás böngészőben: ```http://localhost:5173/```
 
 # 4- dolgok törlése, átalakítása
-20. ```c:\vue-gyak\DrinkFrontend\src\views\AboutView.vue``` - törlés
-21. ```c:\vue-gyak\DrinkFrontend\src\App.vue```
+20. ```c:\vue-gyak\frontend\src\views\AboutView.vue``` - törlés
+21. ```c:\vue-gyak\frontend\src\App.vue```
     <script setup>
     import { RouterLink, RouterView } from 'vue-router'
     </script>
@@ -37,9 +37,9 @@
     
     <style scoped>
     </style>
-22. ```c:\vue-gyak\DrinkFrontend\src\components\``` - mappa (csak a) tartalmának a törlése
-23. ```c:\vue-gyak\DrinkFrontend\src\assets\``` - mappa törlése (teljes mappa)
-24. ```c:\vue-gyak\DrinkFrontend\src\main.js```
+22. ```c:\vue-gyak\frontend\src\components\``` - mappa (csak a) tartalmának a törlése
+23. ```c:\vue-gyak\frontend\src\assets\``` - mappa törlése (teljes mappa)
+24. ```c:\vue-gyak\frontend\src\main.js```
 ```
     //import './assets/main.css' - ez a sor nem kell!!!!
     
@@ -53,7 +53,7 @@
     
     app.mount('#app')
 ```
-25. ```c:\vue-gyak\DrinkFrontend\src\views\HomeView.vue```
+25. ```c:\vue-gyak\frontend\src\views\HomeView.vue```
 ```
     <script setup>
     </script>
@@ -61,7 +61,7 @@
     <template>
     </template>
 ```
-26. ```c:\vue-gyak\DrinkFrontend\src\router\index.js```
+26. ```c:\vue-gyak\frontend\src\router\index.js```
 -kiszedni az AboutView.vue hivatkozást (//-el jelölve, mi nem kell!!!!)!!!!
 ```
     import { createRouter, createWebHistory } from 'vue-router'
@@ -87,7 +87,7 @@
     })
 ```    
     export default router
-27. ```c:\vue-gyak\DrinkFrontend\src\main.js```
+27. ```c:\vue-gyak\frontend\src\main.js```
 -Bele kell tenni a bootstrap hivatkozásokat!!!
 ```
     import { createApp } from 'vue'
@@ -102,9 +102,9 @@
     
     app.mount('#app')
 ```
-28. ```c:\vue-gyak\DrinkFrontend\src\utils\http.js```
+28. ```c:\vue-gyak\frontend\src\utils\http.js```
 -'utils' mappa és benne a 'http.js' fájl létrehozása!
-29. ```c:\vue-gyak\DrinkFrontend\src\utils\http.js```
+29. ```c:\vue-gyak\frontend\src\utils\http.js```
 - ```http.js``` - adattal feltöltése:
 ```
     import axios from "axios";
@@ -123,7 +123,7 @@
 36. ```http://127.0.0.1:8000/api/drinks``` - Ezen a címen egy böngészőből elérhető a backend (elvileg)
 37. Ne zárd be a CLI-t!
 
-# 6- Frontend megírása - kezdjük a HomeView.vue-val!
+# 6- 2 és 3-feladat-Frontend megírása - kezdjük a HomeView.vue-val!
 
 38. Írjuk meg a ```HomeView.vue```-fájlt!
 ```
@@ -181,4 +181,101 @@ onMounted(getData)
   </table>
 </main>
 </template>
+```
+# 7- 4-feladat - NavBar.vue
+39. Hozzunk létre egy mappát: ```c:\vue-gyak\frontend\src\components\layouts\```
+40. És ebben a mappában egy fájlt: ```c:\vue-gyak\frontend\src\components\layouts\NavBar.vue```
+```
+    <script setup>
+    import { RouterLink } from 'vue-router'
+    </script>
+    
+    <template>
+      <RouterView />
+    </template>
+```
+41. Szerzünk egy navbart: ```https://getbootstrap.com/``` beírjuk a keresőbe, hogy nav, az első amit kidob, azt kimásoljuk! ```https://getbootstrap.com/docs/5.3/components/navbar/#nav```
+42. Bemásoljuk a ```NavBar.vue``` ```<template>``` CTRL+V ```</template>``` közé!
+43. A főoldal elemet lecseréljük ```a```-helyett ```router-link```, ```href``` helyett ```to```   és:     ```<router-link class="navbar-brand" to="/">Italok</router-link>```
+44. A 4 db ```li```-ből csak az első kettőt hagyjuk meg! (az utolsó kettőt töröljük)
+45. Az ```a``` csere ```RouterLink```-re,  ```href``` helyett ```to```  és:   ´´´<RouterLink class="nav-link active" aria-current="page" to="/">Kezdőlap</RouterLink>´´´
+46. Az ```a``` csere ```RouterLink```-re,  ```href``` helyett ```to```  és:   ´´´<RouterLink class="nav-link" to="/new">Létrehozás</RouterLink>´´´
+47. Így ez lesz a NavBar.vue:
+```
+<script setup>
+import { RouterLink } from 'vue-router'
+</script>
+
+<template>
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <router-link class="navbar-brand" to="/">Italok</router-link>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <RouterLink class="nav-link active" aria-current="page" to="/">Kezdőlap</RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/new">Létrehozás</RouterLink>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</template>
+```
+48. Az ```app.vue``` -ba be kell linkelni a navbart, ```<script></script>```-be 1: ```import NavBar from "@/components/layouts/NavBar.vue";```
+49. Az ```app.vue``` -ba be kell linkelni a navbart, ```<template></template>```-be 2: ```  <NavBar />```
+
+# 8- 5-feladat- ```DrinkDataView.vue``` és 6-feladat ```CreateNewDrinkFormView.vue``` - fájlok létrehozása
+50. ```c:\vue-gyak\frontend\src\views\DrinkDataView.vue``` és a ```c:\vue-gyak\frontend\src\views\CreateNewDrinkFormView.vue``` fájlok létrehozása
+51. mindkét vue fájlban legyen ```<script></script>``` és ```<template></template>```, akár kivehetjük az ```app.vue```-ből is.:-)
+52. Az új VUE fájlok belinkelése a routerbe: ```c:\vue-gyak\frontend\src\router\index.js``` -be!
+```
+    import { createRouter, createWebHistory } from 'vue-router'
+    import HomeView from '../views/HomeView.vue'
+    
+    const router = createRouter({
+      history: createWebHistory(import.meta.env.BASE_URL),
+      routes: [
+        {
+          path: '/',
+          name: 'home',
+          component: HomeView,
+          meta:{
+            title: "Kezdőlap"
+          }
+        },
+        {
+         path: '/new',
+         name: 'new',
+         component: () => import('@/views/CreateNewDrinkFormView.vue'),
+          meta:{
+           title: 'Hozzáadás'
+          }
+        },
+        {
+          path: '/drinks/:id',
+          name: 'drink',
+          component: () => import('@/views/DrinkDataView.vue'),
+          meta:{
+            title: 'Adatok'
+          }
+        }
+      ]
+    })
+    router.beforeEach((to,from, next)=>{
+      document.title=`${to.meta.title}`;
+      next();
+    })
+    export default router
+
+```
+
+53. ```c:\vue-gyak\frontend\src\views\DrinkDataView.vue``` Megírása
+```
+
 ```
