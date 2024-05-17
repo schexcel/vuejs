@@ -275,7 +275,288 @@ import { RouterLink } from 'vue-router'
 
 ```
 
-53. ```c:\vue-gyak\frontend\src\views\DrinkDataView.vue``` Megírása
+53. ```c:\vue-gyak\frontend\src\views\DrinkDataView.vue``` ```<script>``` -rész  Megírása
 ```
+    <script>
+    //nem script setup, hanem option api
+    import {http} from "@/utils/http.js"
+    import {RouterLink} from "vue-router";
+    export default {
+      data(){
+        return{
+          drink: {}
+        }
+      },
+    
+      //kell komponens is, azért kell, mert vannak konponenseink, pl. router link, hogy elérhető legyen az oldalba, csak akkor fut le, ha van mounted
+      //ugye: composition - OnMounted,
+      //      option api - mounted
+    components:{
+        RouterLink
+    },
+    
+      methods:{
+        //adatlekéreés, async,
+        async getData(){
+          const response = await http.get(`drinks/${this.$route.params.id}`);
+          this.drink = await response.data.data;
+          this.visible = true;
+        }
+      },
+      mounted() {
+        this.getData();
+      }
+    }
 
+    </script>
 ```
+54. ```c:\vue-gyak\frontend\src\views\DrinkDataView.vue``` ```<template>``` -rész  Megírása,a feladat szertin BADGE-ekkel, ```https://getbootstrap.com/``` beírjuk a keresőbe, hogy badge, az első amit kidob, azt megnéz, és alkalmaz! ```<span>``` - kell
+55. Összes termék: ```http://127.0.0.1:8000/api/drinks``` , az adott termék ```http://127.0.0.1:8000/api/drinks/1```
+```
+    <template>
+    <main class="container" v-show="visible === true">
+      <h1>{{ drink.name }}</h1>
+      <hr>
+      <ul class="list-group">
+        <li class="list-group-item">
+          Összetevők:
+          <span v-for="ingredient in drink.ingredients"
+          :key="ingredient.id" class="badge bg-secondary mx-1">
+              {{ ingredient.name }}
+          </span>
+        </li>
+        <li class="list-group-item">Leírás: {{drink.description}}</li>
+        <li class="list-group-item">Ár: {{drink.price}}</li>
+        <li class="list-group-item">Csökkentett ár:
+            <span v-if="drink.discounted_price === null">Nincs</span>
+            <span v-else>{{drink.discounted_price}}</span>
+        </li>
+        <li class="list-group-item" v-if="drink.flavor">Ízesítés: {{drink.flavor.name}}</li>
+        <li class="list-group-item">
+          <router-link to="/" class="btn btn-danger">Vissza</router-link>
+        </li>
+      </ul>
+    </main>
+    </template>
+```
+56.  6-feladat ```CreateNewDrinkFormView.vue``` - fájl ```<template>```` ```</template>``` megírása! ```<main,div row, div col> létrehozása, Form beillesztése!
+```
+    <template>
+    
+      <!-- ezt megírni: -->
+    
+    <main class="m-auto p-3 container">
+    <div class="row">
+      <div class="col">
+        <h1>Új ital létrehozása</h1>
+        <hr>
+      </div>
+    </div>
+    <div  class="row">
+    <div class="col">
+    
+    <!-- form txt-be: -->
+    
+    <VForm  @submit="submitForm">
+      <div class="input-group">
+        <label for="name" class="input-group-text">Név</label>
+        <Field type="text" name="name" id="name" class="form-control"/>
+        <ErrorMessage name="name" as="div" class="alert alert-danger"/>
+      </div>
+      <div class="input-group">
+        <label class="input-group-text">Hozzávaló:</label>
+        <FieldArray name="ingredients">
+          <template v-for="(ingredient, index) in ingredients" :key="index">
+            <Field type="text" :name="'ingredients[' + index + ']'" v-model="ingredients[index]" class="form-control"/>
+            <ErrorMessage :name="'ingredients[' + index + ']'" as="div" class="alert alert-danger"/>
+          </template>
+        </FieldArray>
+        <button class="btn btn-success" type="button" @click="addIngredient"> Hozzávaló hozzadása</button>
+      </div>
+      <div class="input-group">
+        <label for="description" class="input-group-text">Leírás</label>
+        <Field type="text" name="description" id="description" class="form-control"/>
+        <ErrorMessage name="description" as="div" class="alert alert-danger"/>
+      </div>
+      <div class="input-group">
+        <label for="quantity" class="input-group-text">Mennyiség</label>
+        <Field type="number" name="quantity" id="quantity" class="form-control"/>
+        <ErrorMessage name="quantity" as="div" class="alert alert-danger"/>
+      </div>
+      <div class="input-group">
+        <label for="price" class="input-group-text">Ár</label>
+        <Field type="number" name="price" id="price" class="form-control"/>
+        <ErrorMessage name="price" as="div" class="alert alert-danger"/>
+      </div>
+      <div class="input-group">
+        <label for="discounted_price" class="input-group-text">Kedvezményes ár</label>
+        <Field type="number" name="discounted_price" id="discounted_price" class="form-control"/>
+        <ErrorMessage name="discounted_price" as="div" class="alert alert-danger"/>
+      </div>
+    
+      <!-- Ide kell az ízesítés legördülő menüs kódot megírni! -->
+      
+                <button class="btn btn-success mt-2" type="submit">Küldés</button>
+              </VForm>
+      
+              <!-- A megírt elejéhez tartozó záró tagek -->
+            
+          </div>
+        </div>
+      </main>
+    
+    </template>
+```
+57. 6-feladat ```CreateNewDrinkFormView.vue``` - fájl ```<script>```` ```</script>``` megírása! ```<main,div row, div col> létrehozása, Form beillesztése!
+´´´
+    <script setup>
+    //Az a VUE-ból jön, mert Composition API
+    import {Form as VForm, Field, ErrorMessage, FieldArray} from 'vee-validate';
+    import {onMounted, reactive, ref} from 'vue';
+    import {http} from '@/utils/http.js'
+    const ingredient = ref(['']);
+    const flavors = reactive([]);
+    async function getData(){
+      const response = await http.get('flavors');
+      for (const item of response.data.data){
+        flavors.push(item)
+      }
+    }
+    const addIngrent=()=>{
+      ingredients.value.push('');
+    }
+    
+    //ez egy Callback, ami futtatja a getData függvényt!
+    
+    onMounted(getData);
+    </script>
+´´`
+58.  6-feladat ```CreateNewDrinkFormView.vue``` - fájl ```<template>```` ```</template>``` lenyíló menü megírása!
+```
+  <div class="input-group">
+    <label class="input-group-text" for="flavor_id">Ízesítés</label>
+    <Field name="flavor_id" id="flavor_id" as="select" class="form-select">
+      <option v-for="flavor in flavors"
+              :key="flavor.id" :value="flavor.id">
+			  {{flavor.name}}
+			  </option>
+    </Field>
+```
+59. 6-feladat ```CreateNewDrinkFormView.vue``` - teljes file:
+```
+    <script setup>
+    //Az a VUE-ból jön, mert Composition API
+    import {Form as VForm, Field, ErrorMessage, FieldArray} from 'vee-validate';
+    import {onMounted, reactive, ref} from 'vue';
+    import {http} from '@/utils/http.js'
+    const ingredients = ref(['']);
+    const flavors = reactive([]);
+    async function getData(){
+      const response = await http.get('flavors');
+      for (const item of response.data.data){
+        flavors.push(item)
+      }
+    }
+    const addIngredient=()=>{
+      ingredients.value.push('');
+    }
+    async function submitForm(values){
+      try{
+        const resp = await http.post('drinks',values)
+        if  (resp.data.success === true){
+            alert('Sikeres létrehozás\n'+resp.data.data.name)
+        }
+        else{
+            alert("Sikertelen létrehozás\n"+resp.data.message)
+        }
+      }catch (e){
+             alert("Sikertelen létrehozás\n"+e.data.message)
+    
+      }
+    }
+    
+    //ez egy Callback, ami futtatja a getData függvényt!
+    
+    onMounted(getData);
+    </script>
+    
+    <template>
+    
+      <!-- ezt megírni: -->
+    
+    <main class="m-auto p-3 container">
+    <div class="row">
+      <div class="col">
+        <h1>Új ital létrehozása</h1>
+        <hr>
+      </div>
+    </div>
+    <div  class="row">
+    <div class="col">
+    
+    <!-- form txt-be: -->
+    
+    <VForm  @submit="submitForm">
+      <div class="input-group">
+        <label for="name" class="input-group-text">Név</label>
+        <Field type="text" name="name" id="name" class="form-control"/>
+        <ErrorMessage name="name" as="div" class="alert alert-danger"/>
+      </div>
+      <div class="input-group">
+        <label class="input-group-text">Hozzávaló:</label>
+        <FieldArray name="ingredients">
+          <template v-for="(ingredient, index) in ingredients" :key="index">
+            <Field type="text" :name="'ingredients[' + index + ']'" v-model="ingredients[index]" class="form-control"/>
+            <ErrorMessage :name="'ingredients[' + index + ']'" as="div" class="alert alert-danger"/>
+          </template>
+        </FieldArray>
+        <button class="btn btn-success" type="button" @click="addIngredient"> Hozzávaló hozzadása</button>
+      </div>
+      <div class="input-group">
+        <label for="description" class="input-group-text">Leírás</label>
+        <Field type="text" name="description" id="description" class="form-control"/>
+        <ErrorMessage name="description" as="div" class="alert alert-danger"/>
+      </div>
+      <div class="input-group">
+        <label for="quantity" class="input-group-text">Mennyiség</label>
+        <Field type="number" name="quantity" id="quantity" class="form-control"/>
+        <ErrorMessage name="quantity" as="div" class="alert alert-danger"/>
+      </div>
+      <div class="input-group">
+        <label for="price" class="input-group-text">Ár</label>
+        <Field type="number" name="price" id="price" class="form-control"/>
+        <ErrorMessage name="price" as="div" class="alert alert-danger"/>
+      </div>
+      <div class="input-group">
+        <label for="discounted_price" class="input-group-text">Kedvezményes ár</label>
+        <Field type="number" name="discounted_price" id="discounted_price" class="form-control"/>
+        <ErrorMessage name="discounted_price" as="div" class="alert alert-danger"/>
+      </div>
+    
+      <!-- Ide kell az ízesítés legördülő menüs kódot megírni! -->
+    
+      <div class="input-group">
+        <label class="input-group-text" for="flavor_id">Ízesítés</label>
+        <Field name="flavor_id" id="flavor_id" as="select" class="form-select">
+          <option v-for="flavor in flavors"
+                  :key="flavor.id" :value="flavor.id">
+    			  {{flavor.name}}
+    			  </option>
+        </Field>
+    
+      </div>
+                <button class="btn btn-success mt-2" type="submit">Küldés</button>
+              </VForm>
+    
+              <!-- A megírt elejéhez tartozó záró tagek -->
+    
+          </div>
+        </div>
+      </main>
+    
+    </template>
+    
+    <style scoped>
+    </style>
+```
+60. 
